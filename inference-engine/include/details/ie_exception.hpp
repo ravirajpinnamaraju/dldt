@@ -150,7 +150,8 @@ public:
         return this->status_code;
     }
 
-    ~InferenceEngineException() noexcept override;
+    virtual ~InferenceEngineException() {
+    }
 
 private:
     std::pair<StatusCode, bool> status_code_assign(const StatusCode& status) {

@@ -786,7 +786,11 @@ public:
     /**
      * @brief A convolution paddings end array [X, Y, Z, ...]
      */
+#if defined(__ANDROID__)
+    DEFINE_PROP(_pads_end);
+#else
     PropertyVector<unsigned int> _pads_end;
+#endif
     /**
      * @brief A convolution strides array [X, Y, Z, ...]
      */
@@ -1667,7 +1671,8 @@ public:
      */
     using CNNLayer::CNNLayer;
 
-    virtual ~StridedSliceLayer();
+    virtual ~StridedSliceLayer() {
+    };
 };
 
 /**
@@ -1863,8 +1868,8 @@ public:
      * @brief Creates a new OneHot instance
      */
     using CNNLayer::CNNLayer;
-
     virtual ~OneHotLayer();
+
 };
 
 /**
@@ -1910,8 +1915,8 @@ public:
      * @brief Creates a new SelectLayer instance.
      */
     using CNNLayer::CNNLayer;
-
     virtual ~SelectLayer();
+
 };
 
 /**
@@ -2079,4 +2084,46 @@ public:
     virtual ~ScatterLayer();
 };
 
+
+#if defined(__ANDROID__)
+class TanHLayer : public CNNLayer {
+public:
+    /**
+    * @brief A default constructor. Creates a new ReLULayer instance and initializes layer parameters with the given values.
+    * @param prms Initial layer parameters
+    */
+    //explicit TanHLayer(const LayerParams &prms) : CNNLayer(prms), negative_slope(0.0f) {}
+
+    using CNNLayer::CNNLayer;
+#if defined(__ANDROID__)
+    virtual ~TanHLayer();
+#endif
+
+    /**
+     * @brief Negative slope is used to takle negative inputs instead of setting them to 0
+     */
+    float negative_slope;
+};
+
+class SigmoidLayer : public CNNLayer {
+public:
+    /**
+    * @brief A default constructor. Creates a new ReLULayer instance and initializes layer parameters with the given values.
+    * @param prms Initial layer parameters
+    */
+    //explicit SigmoidLayer(const LayerParams &prms) : CNNLayer(prms), negative_slope(0.0f) {}
+
+    using CNNLayer::CNNLayer;
+
+#if defined(__ANDROID__)
+    virtual ~SigmoidLayer();
+#endif
+
+    /**
+     * @brief Negative slope is used to takle negative inputs instead of setting them to 0
+     */
+    float negative_slope;
+ };
+ 
+#endif
 }  // namespace InferenceEngine

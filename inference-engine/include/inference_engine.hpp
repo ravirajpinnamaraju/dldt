@@ -72,13 +72,23 @@ inline void TopResults(unsigned int n, TBlob<T>& input, std::vector<unsigned>& o
     }
 }
 
+#if defined(__ANDROID__)
+#define TBLOB_TOP_RESULT(precision)\
+    case InferenceEngine::Precision::precision  : {\
+        using myBlobType = InferenceEngine::PrecisionTrait<Precision::precision>::value_type;\
+        TBlob<myBlobType> &tblob = static_cast<TBlob<myBlobType> &>(input);\
+        TopResults(n, tblob, output);\
+        break;\
+    }
+#else
 #define TBLOB_TOP_RESULT(precision)                                                           \
     case InferenceEngine::Precision::precision: {                                             \
         using myBlobType = InferenceEngine::PrecisionTrait<Precision::precision>::value_type; \
         TBlob<myBlobType>& tblob = dynamic_cast<TBlob<myBlobType>&>(input);                   \
         TopResults(n, tblob, output);                                                         \
-        break;                                                                                \
-    }
+        break;                                                                          \
+	}
+#endif
 
 /**
  * @deprecated InferenceEngine utility functions are not a part of public API
@@ -173,6 +183,16 @@ INFERENCE_ENGINE_DEPRECATED(
     "InferenceEngine utility functions are not a part of public API. Will be removed in 2020 R2")
 inline void ConvertImageToInput(unsigned char* imgBufRGB8, size_t lengthbytesSize, Blob& input) {
     IE_SUPPRESS_DEPRECATED_START
+#if defined(__ANDROID__)
+    TBlob<float> *float_input = static_cast<TBlob<float> *>(&input);
+    if (float_input != nullptr) copyFromRGB8(imgBufRGB8, lengthbytesSize, float_input);
+
+    TBlob<short> *short_input = static_cast<TBlob<short> *>(&input);
+    if (short_input != nullptr) copyFromRGB8(imgBufRGB8, lengthbytesSize, short_input);
+
+    TBlob<uint8_t> *byte_input = static_cast<TBlob<uint8_t> *>(&input);
+    if (byte_input != nullptr) copyFromRGB8(imgBufRGB8, lengthbytesSize, byte_input);
+#else
     TBlob<float>* float_input = dynamic_cast<TBlob<float>*>(&input);
     if (float_input != nullptr) copyFromRGB8(imgBufRGB8, lengthbytesSize, float_input);
 
@@ -181,6 +201,7 @@ inline void ConvertImageToInput(unsigned char* imgBufRGB8, size_t lengthbytesSiz
 
     TBlob<uint8_t>* byte_input = dynamic_cast<TBlob<uint8_t>*>(&input);
     if (byte_input != nullptr) copyFromRGB8(imgBufRGB8, lengthbytesSize, byte_input);
+#endif
     IE_SUPPRESS_DEPRECATED_END
 }
 
@@ -200,8 +221,12 @@ void copyToFloat(float* dst, const InferenceEngine::Blob* src) {
     }
     const InferenceEngine::TBlob<T>* t_blob = dynamic_cast<const InferenceEngine::TBlob<T>*>(src);
     if (t_blob == nullptr) {
+#if defined(__ANDROID__)
+	// input type mismatch with actual input
+#else
         THROW_IE_EXCEPTION << "input type is " << src->getTensorDesc().getPrecision() << " but input is not "
                            << typeid(T).name();
+#endif
     }
 
     const T* srcPtr = t_blob->readOnly();

@@ -42,8 +42,8 @@ Blob::~Blob() {
 
 }
 
-/*
-//template <typename T>
+
+/*//template <typename T>
 //template <class T>
 template<typename T, typename = std::enable_if<std::is_pod<T>::value>>
 TBlob<T>::~TBlob() {

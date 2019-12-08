@@ -37,7 +37,9 @@ public:
     /**
      * @brief A virtual destructor
      */
-    virtual ~CompoundBlob() = default;
+    virtual ~CompoundBlob() {
+    };
+    //= default;
 
     /**
      * @brief A copy constructor

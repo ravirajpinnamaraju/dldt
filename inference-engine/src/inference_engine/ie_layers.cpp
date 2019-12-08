@@ -133,5 +133,38 @@ GRNLayer::~GRNLayer(){
 MVNLayer::~MVNLayer(){
 
 }
+ShuffleChannelsLayer::~ShuffleChannelsLayer() {}
+DepthToSpaceLayer::~DepthToSpaceLayer() {}
+SpaceToDepthLayer::~SpaceToDepthLayer() {}
+GemmLayer::~GemmLayer() {}
+PadLayer::~PadLayer() {}
+GatherLayer::~GatherLayer() {}
+TopKLayer::~TopKLayer() {}
+UniqueLayer::~UniqueLayer() {}
+NonMaxSuppressionLayer::~NonMaxSuppressionLayer() {}
+SelectLayer::~SelectLayer() {}
+ScatterLayer::~ScatterLayer() {}
+SparseFillEmptyRowsLayer::~SparseFillEmptyRowsLayer() {}
+SparseSegmentReduceLayer::~SparseSegmentReduceLayer() {}
+ExperimentalSparseWeightedReduceLayer::~ExperimentalSparseWeightedReduceLayer() {}
+SparseToDenseLayer::~SparseToDenseLayer() {}
+BucketizeLayer::~BucketizeLayer() {}
+ReverseSequenceLayer::~ReverseSequenceLayer() {}
+OneHotLayer::~OneHotLayer() {}
+RangeLayer::~RangeLayer() {}
+TensorIterator::~TensorIterator() {}
+BinaryConvolutionLayer::~BinaryConvolutionLayer() {}
+RNNCell::~RNNCell() {}
+LSTMCell::~LSTMCell() {}
+GRUCell::~GRUCell() {}
+FillLayer::~FillLayer() {}
+BroadcastLayer::~BroadcastLayer() {}
+QuantizeLayer::~QuantizeLayer() {}
+MathLayer::~MathLayer() {}
+ReduceLayer::~ReduceLayer() {}
+ReLU6Layer::~ReLU6Layer() {}
+RNNSequenceLayer::~RNNSequenceLayer() {}
+RNNCellBase::~RNNCellBase() {}
+DeformableConvolutionLayer::~DeformableConvolutionLayer() {}
 
 #endif

@@ -124,6 +124,17 @@ public:
      * @brief The copy-like constructor, can create So Pointer that dereferenced into child type if T is derived of U
      * @param that copied SOPointer object
      */
+#if defined(__ANDROID__)
+    //FIX ME by providing below implementation without using dynamic_pointer_cast
+    template<class U, class W>
+    SOPointer(const SOPointer<U, W> & that) :
+        _so_loader(std::static_pointer_cast<Loader>(that._so_loader)),
+        _pointedObj(std::static_pointer_cast<T>(that._pointedObj)) {
+        if (_pointedObj == nullptr) {
+            THROW_IE_EXCEPTION << "Cannot create object from SOPointer<U, W> reference";
+        }
+    }
+#else
     template <class U, class W>
     SOPointer(const SOPointer<U, W>& that)
         : _so_loader(std::dynamic_pointer_cast<Loader>(that._so_loader)),
@@ -132,7 +143,7 @@ public:
             THROW_IE_EXCEPTION << "Cannot create object from SOPointer<U, W> reference";
         }
     }
-
+#endif
     /**
      * @brief Standard pointer operator
      * @return underlined interface with disabled Release method

@@ -105,7 +105,6 @@ Blob::~Blob() {}
 
 MemoryBlob::~MemoryBlob() {}
 
-#ifdef __clang__
 template <typename T, typename U>
 TBlob<T, U>::~TBlob() {
     free();
@@ -120,4 +119,3 @@ template class InferenceEngine::TBlob<uint8_t>;
 template class InferenceEngine::TBlob<int>;
 template class InferenceEngine::TBlob<long>;
 template class InferenceEngine::TBlob<long long>;
-#endif  // __clang__

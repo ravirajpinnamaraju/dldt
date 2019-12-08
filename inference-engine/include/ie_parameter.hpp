@@ -100,7 +100,8 @@ public:
     /**
      * @brief Destructor
      */
-    virtual ~Parameter();
+    virtual ~Parameter() {
+    };
 
     /**
      * Copy operator for Parameter
@@ -139,7 +140,7 @@ public:
      */
     template <class T>
     bool is() const {
-        return empty() ? false : ptr->is(typeid(T));
+        return empty() ? false : false;
     }
 
     /**
@@ -266,11 +267,8 @@ private:
     struct HasOperatorEqual : CheckOperatorEqual<T, EqualTo>::type {};
 
     struct Any {
-#ifdef __clang__
-        virtual ~Any();
-#else
-        virtual ~Any() = default;
-#endif
+        virtual ~Any() {
+	};
         virtual bool is(const std::type_info&) const = 0;
         virtual Any* copy() const = 0;
         virtual bool operator==(const Any& rhs) const = 0;
@@ -281,7 +279,7 @@ private:
         using std::tuple<T>::tuple;
 
         bool is(const std::type_info& id) const override {
-            return id == typeid(T);
+            return true;
         }
         Any* copy() const override {
             return new RealData {get()};
@@ -306,7 +304,7 @@ private:
         }
 
         bool operator==(const Any& rhs) const override {
-            return rhs.is(typeid(T)) && equal<T>(*this, rhs);
+            return equal<T>(*this, rhs);
         }
     };
 
@@ -319,13 +317,12 @@ private:
     template <typename T>
     static const T& dyn_cast(const Any* obj) {
         if (obj == nullptr) THROW_IE_EXCEPTION << "Parameter is empty!";
-        return dynamic_cast<const RealData<T>&>(*obj).get();
+        return static_cast<const RealData<T>&>(*obj).get();
     }
 
     Any* ptr = nullptr;
 };
 
-#ifdef __clang__
 extern template struct INFERENCE_ENGINE_API_CLASS(InferenceEngine::Parameter::RealData<int>);
 extern template struct INFERENCE_ENGINE_API_CLASS(InferenceEngine::Parameter::RealData<bool>);
 extern template struct INFERENCE_ENGINE_API_CLASS(InferenceEngine::Parameter::RealData<float>);
@@ -339,6 +336,16 @@ extern template struct INFERENCE_ENGINE_API_CLASS(
     InferenceEngine::Parameter::RealData<std::tuple<unsigned int, unsigned int>>);
 extern template struct INFERENCE_ENGINE_API_CLASS(
     InferenceEngine::Parameter::RealData<std::tuple<unsigned int, unsigned int, unsigned int>>);
-#endif  // __clang__
+template struct InferenceEngine::Parameter::RealData<int>;
+template struct InferenceEngine::Parameter::RealData<bool>;
+template struct InferenceEngine::Parameter::RealData<float>;
+template struct InferenceEngine::Parameter::RealData<uint32_t>;
+template struct InferenceEngine::Parameter::RealData<std::string>;
+template struct InferenceEngine::Parameter::RealData<unsigned long>;
+template struct InferenceEngine::Parameter::RealData<std::vector<int>>;
+template struct InferenceEngine::Parameter::RealData<std::vector<std::string>>;
+template struct InferenceEngine::Parameter::RealData<std::vector<unsigned long>>;
+template struct InferenceEngine::Parameter::RealData<std::tuple<unsigned int, unsigned int>>;
+template struct InferenceEngine::Parameter::RealData<std::tuple<unsigned int, unsigned int, unsigned int>>;
 
 }  // namespace InferenceEngine

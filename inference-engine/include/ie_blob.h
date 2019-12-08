@@ -283,7 +283,8 @@ public:
     /**
      * @brief MemoryBlob virtual destructor
      */
-    virtual ~MemoryBlob();
+    virtual ~MemoryBlob(){
+    };
 
     /**
      * @brief Constructor. Creates an empty MemoryBlob object with the specified precision.
@@ -485,6 +486,9 @@ public:
      */
     explicit TBlob(const TensorDesc& tensorDesc): MemoryBlob(tensorDesc) {}
 
+    ~TBlob() {
+        free();
+    }
     /**
      * @brief The constructor creates a TBlob object with the specified dimensions and layout
      * on the pre-allocated memory.
@@ -554,13 +558,6 @@ public:
     /**
      *@brief Virtual destructor.
      */
-#ifdef __clang__
-    virtual ~TBlob();
-#else
-    virtual ~TBlob() {
-        free();
-    }
-#endif  // __clang__
 
     /**
      * @brief Gets the size of the given type.
@@ -757,7 +754,6 @@ protected:
     }
 };
 
-#ifdef __clang__
 extern template class INFERENCE_ENGINE_API_CLASS(InferenceEngine::TBlob<float>);
 extern template class INFERENCE_ENGINE_API_CLASS(InferenceEngine::TBlob<double>);
 extern template class INFERENCE_ENGINE_API_CLASS(InferenceEngine::TBlob<int16_t>);
@@ -767,8 +763,16 @@ extern template class INFERENCE_ENGINE_API_CLASS(InferenceEngine::TBlob<uint8_t>
 extern template class INFERENCE_ENGINE_API_CLASS(InferenceEngine::TBlob<int>);
 extern template class INFERENCE_ENGINE_API_CLASS(InferenceEngine::TBlob<long>);
 extern template class INFERENCE_ENGINE_API_CLASS(InferenceEngine::TBlob<long long>);
-#endif  // __clang__
 
+template class InferenceEngine::TBlob<float>;
+template class InferenceEngine::TBlob<double>;
+template class InferenceEngine::TBlob<int16_t>;
+template class InferenceEngine::TBlob<uint16_t>;
+template class InferenceEngine::TBlob<int8_t>;
+template class InferenceEngine::TBlob<uint8_t>;
+template class InferenceEngine::TBlob<int>;
+template class InferenceEngine::TBlob<long>;
+template class InferenceEngine::TBlob<long long>;
 /**
  * @brief Creates a blob with the given tensor descriptor.
  *
@@ -841,6 +845,8 @@ template <typename T, typename... Args, typename std::enable_if<std::is_base_of<
 std::shared_ptr<T> make_shared_blob(Args&&... args) {
     return std::make_shared<T>(std::forward<Args>(args)...);
 }
+    
+
 
 /**
  * @brief This structure describes ROI data.
