@@ -95,7 +95,8 @@ public:
      * size.
      */
     void SetBlob(const std::string& name, const Blob::Ptr& data) {
-        CALL_STATUS_FNC(SetBlob, name.c_str(), data);
+	    std::cout << "in infer request " << data;
+	CALL_STATUS_FNC(SetBlob, name.c_str(), data);
     }
 
     /**

@@ -87,11 +87,13 @@ public:
     }
 
     void SetBlob(const char* name, const Blob::Ptr& data) override {
-        CheckBusy();
+	std::cout << "SetBlob Debug 3" << std::endl;
+	CheckBusy();
         SetBlob_ThreadUnsafe(name, data);
     }
 
     void SetBlob(const char* name, const Blob::Ptr& data, const PreProcessInfo& info) override {
+	std::cout << "SetBlob Debug 4" << std::endl;
         CheckBusy();
         SetBlob_ThreadUnsafe(name, data, info);
     }

@@ -222,7 +222,8 @@ void copyToFloat(float* dst, const InferenceEngine::Blob* src) {
     const InferenceEngine::TBlob<T>* t_blob = dynamic_cast<const InferenceEngine::TBlob<T>*>(src);
     if (t_blob == nullptr) {
 #if defined(__ANDROID__)
-	// input type mismatch with actual input
+	    std::cout << "in t_blob is nullptr" << std::endl;
+	    // input type mismatch with actual input
 #else
         THROW_IE_EXCEPTION << "input type is " << src->getTensorDesc().getPrecision() << " but input is not "
                            << typeid(T).name();

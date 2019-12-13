@@ -79,11 +79,15 @@ public:
      */
     void SetBlob(const char* name, const Blob::Ptr& data) override {
         IE_PROFILING_AUTO_SCOPE(SetBlob)
-        if (name == nullptr) {
+        std::cout << "SetBlob - setblob" << std::endl;
+
+	if (name == nullptr) {
             THROW_IE_EXCEPTION << NOT_FOUND_str + "Failed to set blob with empty name";
         }
         if (!data) THROW_IE_EXCEPTION << NOT_ALLOCATED_str << "Failed to set empty blob with name: \'" << name << "\'";
+        std::cout << "SetBlob data.is CompoundBlob" << std::endl;
         const bool compoundBlobPassed = data->is<CompoundBlob>();
+        std::cout << "SetBlob data.is CompoundBlob 2 " << std::endl;
         if (!compoundBlobPassed && data->buffer() == nullptr)
             THROW_IE_EXCEPTION << "Input data was not allocated. Input name: \'" << name << "\'";
         if (data->size() == 0) {
@@ -92,6 +96,7 @@ public:
 
         InputInfo::Ptr foundInput;
         DataPtr foundOutput;
+        std::cout << "SetBlob data-size findInAndOutByName" << std::endl;
         size_t dataSize = data->size();
         if (findInputAndOutputBlobByName(name, foundInput, foundOutput)) {
             if (foundInput->getPrecision() != data->getTensorDesc().getPrecision()) {
@@ -122,6 +127,7 @@ public:
                 _inputs[name] = data;
             }
         } else {
+            std::cout << "SetBlob after else" << std::endl;
             if (compoundBlobPassed) {
                 THROW_IE_EXCEPTION << NOT_IMPLEMENTED_str
                                    << "cannot set compound blob: supported only for input pre-processing";
@@ -137,6 +143,7 @@ public:
             }
             _outputs[name] = data;
         }
+        std::cout << "SetBlob end" << std::endl;
     }
 
     /**
@@ -179,6 +186,7 @@ public:
      * @param info Preprocess info for blob.
      */
     void SetBlob(const char* name, const Blob::Ptr& data, const PreProcessInfo& info) override {
+        std::cout << "SetBlob 2" << std::endl;
         InputInfo::Ptr foundInput;
         DataPtr foundOutput;
         if (findInputAndOutputBlobByName(name, foundInput, foundOutput)) {

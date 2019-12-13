@@ -74,7 +74,8 @@ public:
     ExecutableNetwork LoadNetwork(ICNNNetwork& network, const std::map<std::string, std::string>& config) {
         IExecutableNetwork::Ptr ret;
         IE_SUPPRESS_DEPRECATED_START
-        CALL_STATUS_FNC(LoadNetwork, ret, network, config);
+        std::cout << " Calling LoadNetwork in inferencePlugin" << std::endl;
+	CALL_STATUS_FNC(LoadNetwork, ret, network, config);
         IE_SUPPRESS_DEPRECATED_END
         return ExecutableNetwork(ret, actual);
     }

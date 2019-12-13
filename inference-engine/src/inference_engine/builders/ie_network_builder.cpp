@@ -399,7 +399,9 @@ void Builder::Network::disconnect(const Connection& connection) {
 }
 
 const INetwork::CPtr Builder::Network::build() {
+    std::cout << "Before calling validate " << std::endl;
     validate();
+    std::cout << "validate complete\n";
     InferenceEngine::Builder::Network::Ptr network =
         std::make_shared<InferenceEngine::Builder::Network>(static_cast<const INetwork&>(*this));
     return network;
@@ -450,7 +452,9 @@ void Builder::Network::validate() {
 
     ShapeInfer::Reshaper reshaper(this);
     ResponseDesc resp;
+    std::cout << "Before reshaper.run" << std::endl;
     StatusCode sts = reshaper.run(inputShapes, &resp);
+    std::cout << "ie_network_builder::validate After reshaper.run" << std::endl;
     // Not all implementations may be registered if all shapes were read from IR.
     if (sts == NOT_FOUND) {
         bool allShapesLooksGood = true;
@@ -465,8 +469,10 @@ void Builder::Network::validate() {
         if (allShapesLooksGood) sts = OK;
     }
 
-    if (sts != OK) THROW_IE_EXCEPTION << resp.msg;
-
+    if (sts != OK) {
+        std::cout << "ie_network_builder::validate sts!= OK" << std::endl;
+        THROW_IE_EXCEPTION << resp.msg;
+    }
     // Check all parameters
     for (const auto& layer : getLayers()) {
         try {

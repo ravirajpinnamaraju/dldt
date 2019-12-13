@@ -40,6 +40,7 @@ public:
     /**
      * @brief Default constructor
      */
+    void dummy() const;
     Parameter() = default;
 
     /**
@@ -139,9 +140,7 @@ public:
      * @return true if type of value is correct
      */
     template <class T>
-    bool is() const {
-        return empty() ? false : false;
-    }
+    bool is() const;
 
     /**
      * Dynamic cast to specified type
@@ -247,7 +246,7 @@ public:
         return !(*this == rhs);
     }
 
-private:
+public:
     template <class T, class EqualTo>
     struct CheckOperatorEqual {
         template <class U, class V>
@@ -273,45 +272,40 @@ private:
         virtual Any* copy() const = 0;
         virtual bool operator==(const Any& rhs) const = 0;
     };
+    
+    // template <class T>
+    // bool isID(const std::type_info& id) {
+    //     return id == typeid(T);
+    // }
 
     template <class T>
     struct RealData : Any, std::tuple<T> {
         using std::tuple<T>::tuple;
 
-        bool is(const std::type_info& id) const override {
-            return true;
-        }
-        Any* copy() const override {
-            return new RealData {get()};
-        }
+        //bool isID(const std::type_info& id) const;
 
-        T& get() & {
-            return std::get<0>(*static_cast<std::tuple<T>*>(this));
-        }
+        bool is(const std::type_info& id) const override;
+        
+        Any* copy() const override ;
 
-        const T& get() const& {
-            return std::get<0>(*static_cast<const std::tuple<T>*>(this));
-        }
+        T& get() &;
+
+        const T& get() const& ;
 
         template <class U>
-        typename std::enable_if<!HasOperatorEqual<U>::value, bool>::type equal(const Any& left, const Any& rhs) const {
-            THROW_IE_EXCEPTION << "Parameter doesn't contain equal operator";
-        }
+        typename std::enable_if<!HasOperatorEqual<U>::value, bool>::type equal(const Any& left, const Any& rhs) const ;
 
         template <class U>
-        typename std::enable_if<HasOperatorEqual<U>::value, bool>::type equal(const Any& left, const Any& rhs) const {
-            return dyn_cast<U>(&left) == dyn_cast<U>(&rhs);
-        }
+        typename std::enable_if<HasOperatorEqual<U>::value, bool>::type equal(const Any& left, const Any& rhs) const;
+        
 
-        bool operator==(const Any& rhs) const override {
-            return equal<T>(*this, rhs);
-        }
+        bool operator==(const Any& rhs) const override;
     };
 
     template <typename T>
     static T& dyn_cast(Any* obj) {
         if (obj == nullptr) THROW_IE_EXCEPTION << "Parameter is empty!";
-        return dynamic_cast<RealData<T>&>(*obj).get();
+        return static_cast<RealData<T>&>(*obj).get();
     }
 
     template <typename T>
@@ -323,29 +317,6 @@ private:
     Any* ptr = nullptr;
 };
 
-extern template struct INFERENCE_ENGINE_API_CLASS(InferenceEngine::Parameter::RealData<int>);
-extern template struct INFERENCE_ENGINE_API_CLASS(InferenceEngine::Parameter::RealData<bool>);
-extern template struct INFERENCE_ENGINE_API_CLASS(InferenceEngine::Parameter::RealData<float>);
-extern template struct INFERENCE_ENGINE_API_CLASS(InferenceEngine::Parameter::RealData<uint32_t>);
-extern template struct INFERENCE_ENGINE_API_CLASS(InferenceEngine::Parameter::RealData<std::string>);
-extern template struct INFERENCE_ENGINE_API_CLASS(InferenceEngine::Parameter::RealData<unsigned long>);
-extern template struct INFERENCE_ENGINE_API_CLASS(InferenceEngine::Parameter::RealData<std::vector<int>>);
-extern template struct INFERENCE_ENGINE_API_CLASS(InferenceEngine::Parameter::RealData<std::vector<std::string>>);
-extern template struct INFERENCE_ENGINE_API_CLASS(InferenceEngine::Parameter::RealData<std::vector<unsigned long>>);
-extern template struct INFERENCE_ENGINE_API_CLASS(
-    InferenceEngine::Parameter::RealData<std::tuple<unsigned int, unsigned int>>);
-extern template struct INFERENCE_ENGINE_API_CLASS(
-    InferenceEngine::Parameter::RealData<std::tuple<unsigned int, unsigned int, unsigned int>>);
-template struct InferenceEngine::Parameter::RealData<int>;
-template struct InferenceEngine::Parameter::RealData<bool>;
-template struct InferenceEngine::Parameter::RealData<float>;
-template struct InferenceEngine::Parameter::RealData<uint32_t>;
-template struct InferenceEngine::Parameter::RealData<std::string>;
-template struct InferenceEngine::Parameter::RealData<unsigned long>;
-template struct InferenceEngine::Parameter::RealData<std::vector<int>>;
-template struct InferenceEngine::Parameter::RealData<std::vector<std::string>>;
-template struct InferenceEngine::Parameter::RealData<std::vector<unsigned long>>;
-template struct InferenceEngine::Parameter::RealData<std::tuple<unsigned int, unsigned int>>;
-template struct InferenceEngine::Parameter::RealData<std::tuple<unsigned int, unsigned int, unsigned int>>;
+
 
 }  // namespace InferenceEngine
