@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 
+#define PWL_FROM_FILE
+
 #include <vector>
 #include <iostream>
 
@@ -151,6 +153,8 @@ void make_gna_pwl(const DnnActivation  fun,
             s = gna_slope(1.0, in_scale, out_scale);
             gna_pwl[1].slope = FLOAT_TO_INT16(s.slope * s.slope_scale);
             gna_pwl[1].xBase = gna_pwl[1].xBase | s.slope_scale_index;
+            int32_t round_scale = FLOAT_TO_INT16(0.5f / s.slope) & XBASEMASK;
+            gna_pwl[1].xBase = (gna_pwl[1].xBase - round_scale) | s.slope_scale_index;
             gnalog() << gna_pwl[1].xBase / in_scale
                      << " " << gna_pwl[1].yBase / out_scale
                      << " " << 1.0
